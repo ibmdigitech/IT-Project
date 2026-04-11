@@ -9,12 +9,13 @@ export const AuthProvider = ({ children }) => {
     const userInfo = localStorage.getItem('userInfo');
     return userInfo ? JSON.parse(userInfo) : null;
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const login = async (username, password) => {
     try {
       // Use import.meta.env for Vite environment variables
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const { data } = await axios.post(`${API_URL}/api/auth/login`, { username, password });
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));

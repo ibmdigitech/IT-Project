@@ -32,12 +32,12 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Our Solutions</h4>
             <ul className="space-y-3">
-              <li><Link to="/services" className="hover:text-primary-400 transition">Managed IT Support</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">CCTV & Surveillance</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">Cybersecurity</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">Cloud Solutions</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">Web & App Development</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">Network & Cabling</Link></li>
+              <li><Link to="/services/it-amc-support" className="hover:text-primary-400 transition">Managed IT Support</Link></li>
+              <li><Link to="/services/cctv-installation" className="hover:text-primary-400 transition">CCTV & Surveillance</Link></li>
+              <li><Link to="/services/cyber-security" className="hover:text-primary-400 transition">Cybersecurity</Link></li>
+              <li><Link to="/services/cloud-solution" className="hover:text-primary-400 transition">Cloud Solutions</Link></li>
+              <li><Link to="/services/web-design-development" className="hover:text-primary-400 transition">Web & App Development</Link></li>
+              <li><Link to="/services/structured-cabling" className="hover:text-primary-400 transition">Network & Cabling</Link></li>
             </ul>
           </div>
 
@@ -45,12 +45,12 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-3">
-              <li><Link to="/" className="hover:text-primary-400 transition">Home</Link></li>
               <li><Link to="/about" className="hover:text-primary-400 transition">About Us</Link></li>
-              <li><Link to="/services" className="hover:text-primary-400 transition">Services</Link></li>
-              <li><Link to="/blog" className="hover:text-primary-400 transition">Blog</Link></li>
-              <li><Link to="/contact" className="hover:text-primary-400 transition">Contact Us</Link></li>
-              <li><Link to="/admin/login" className="hover:text-primary-400 transition">Admin Portal</Link></li>
+              <li><Link to="/solutions" className="hover:text-primary-400 transition">Solutions</Link></li>
+              <li><Link to="/partners" className="hover:text-primary-400 transition">Our Partners</Link></li>
+              <li><Link to="/careers" className="hover:text-primary-400 transition">Careers</Link></li>
+              <li><Link to="/faq" className="hover:text-primary-400 transition">FAQ</Link></li>
+              <li><Link to="/legal" className="hover:text-primary-400 transition">Privacy & Terms</Link></li>
             </ul>
           </div>
 
@@ -84,8 +84,8 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
           <p>&copy; 2026 SmartIT Solutions LLC. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-primary-400 transition">Privacy Policy</a>
-            <a href="#" className="hover:text-primary-400 transition">Terms of Service</a>
+            <Link to="/legal" className="hover:text-primary-400 transition">Privacy Policy</Link>
+            <Link to="/legal" className="hover:text-primary-400 transition">Terms of Service</Link>
           </div>
         </div>
       </div>

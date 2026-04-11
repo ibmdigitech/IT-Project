@@ -1,232 +1,293 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { 
-  Monitor, ShieldAlert, Code, 
-  CheckCircle2, Server, Smartphone, 
-  Send 
-} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { servicesData } from '../../data/servicesData';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
+import WhatsAppButton from '../../components/WhatsAppButton';
+import Footer from '../../components/Footer';
+import AnimatedCounter from '../../components/AnimatedCounter';
+import TestimonialCarousel from '../../components/TestimonialCarousel';
+import { Monitor, ShieldAlert, Zap, Cloud, Lock, Video, Code, Smartphone, Building, Headphones, Briefcase, Database, Search, ShoppingCart, Wifi, LineChart, Server, HardDrive, ArrowRight, CheckCircle2, Activity, Users, Award, MessageCircle } from 'lucide-react';
+
+const iconMap = {
+  'it-infrastructure': <Monitor className="w-6 h-6" />,
+  'cyber-security': <ShieldAlert className="w-6 h-6" />,
+  'fiber-optic-cabling': <Zap className="w-6 h-6" />,
+  'cloud-solution': <Cloud className="w-6 h-6" />,
+  'data-endpoint-security': <Lock className="w-6 h-6" />,
+  'cctv-installation': <Video className="w-6 h-6" />,
+  'web-design-development': <Code className="w-6 h-6" />,
+  'mobile-app-development': <Smartphone className="w-6 h-6" />,
+  'biometric-attendance': <Building className="w-6 h-6" />,
+  'queue-management': <Headphones className="w-6 h-6" />,
+  'meeting-room-solutions': <Briefcase className="w-6 h-6" />,
+  'domain-registration-hosting': <Database className="w-6 h-6" />,
+  'whatsapp-business-api': <Search className="w-6 h-6" />,
+  'mdm-solutions': <ShoppingCart className="w-6 h-6" />,
+  'next-gen-firewall': <Wifi className="w-6 h-6" />,
+  'it-amc-support': <LineChart className="w-6 h-6" />,
+  'it-outsourcing': <Server className="w-6 h-6" />,
+  'structured-cabling': <HardDrive className="w-6 h-6" />,
+};
+
+const partnerLogos = [
+  { name: 'Microsoft', url: 'https://www.google.com/s2/favicons?domain=microsoft.com&sz=128' },
+  { name: 'Cisco', url: 'https://www.google.com/s2/favicons?domain=cisco.com&sz=128' },
+  { name: 'Dell', url: 'https://www.google.com/s2/favicons?domain=dell.com&sz=128' },
+  { name: 'HP', url: 'https://www.google.com/s2/favicons?domain=hp.com&sz=128' },
+  { name: 'Fortinet', url: 'https://www.google.com/s2/favicons?domain=fortinet.com&sz=128' },
+  { name: 'AWS', url: 'https://www.google.com/s2/favicons?domain=amazon.com&sz=128' },
+  { name: 'Lenovo', url: 'https://www.google.com/s2/favicons?domain=lenovo.com&sz=128' },
+  { name: 'VMware', url: 'https://www.google.com/s2/favicons?domain=vmware.com&sz=128' },
+];
 
 const Home = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    serviceType: 'IT Support',
-    message: ''
-  });
-  const [status, setStatus] = useState({ type: '', text: '' });
+  const [statsRef, statsVisible] = useScrollReveal();
+  const [servicesRef, servicesVisible] = useScrollReveal(0.1);
+  const [pricingRef, pricingVisible] = useScrollReveal(0.1);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus({ type: 'loading', text: 'Sending your request...' });
-    
-    try {
-      await axios.post(`${API_URL}/api/contacts`, formData);
-      setStatus({ type: 'success', text: 'Message sent! Our team will contact you shortly.' });
-      setFormData({ name: '', email: '', phone: '', serviceType: 'IT Support', message: '' });
-    } catch {
-      setStatus({ type: 'error', text: 'Failed to send message. Please try again later.' });
-    }
-  };
+  // Take top 3 services for home display
+  const displayServices = servicesData.slice(0, 3);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 relative transition-colors duration-200">
-      {/* WhatsApp Floating Button */}
-      <a 
-        href="https://wa.me/18001234567" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 hover:scale-110 transition-transform z-50 flex items-center justify-center"
-      >
-        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
-        </svg>
-      </a>
+    <div className="bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
+      <WhatsAppButton />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-8 transition-colors">
+      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-100/40 via-transparent to-transparent dark:from-primary-900/20"></div>
+        
+        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-8 animate-fade-in-up">
           Enterprise Tech for <br className="hidden md:block"/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400">
-            Modern Business
-          </span>
+          <span className="gradient-text">Modern Business</span>
         </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl transition-colors">
-          We provide scalable IT infrastructure, robust CCTV security solutions, and high-performance Web Design specifically tailored for forward-thinking companies.
+        
+        <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          We provide scalable IT infrastructure, SIRA-compliant CCTV security, and high-performance Web Design tailored for forward-thinking UAE companies.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <a href="#services" className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold rounded-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition shadow-lg w-full sm:w-auto">Our Solutions</a>
-          <a href="#contact" className="px-8 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold rounded-lg hover:border-primary-500 transition shadow-sm w-full sm:w-auto">Talk to Sales</a>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <Link to="/services" className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition shadow-xl w-full sm:w-auto hover:-translate-y-1">
+            Explore Solutions
+          </Link>
+          <a href="https://wa.me/971501234567" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 font-bold rounded-xl hover:border-primary-500 transition shadow-sm w-full sm:w-auto flex items-center justify-center gap-2">
+            <span className="text-green-500">WhatsApp</span> Consultation
+          </a>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 bg-white dark:bg-slate-900 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight pt-12">Comprehensive IT & Security Solutions</h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">Everything you need to secure and scale your enterprise.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary-100 dark:hover:border-primary-900 transition bg-slate-50 dark:bg-slate-800 group">
-              <Server className="text-primary-600 dark:text-primary-400 w-12 h-12 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold mb-3 dark:text-white">Managed IT Support</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">24/7 proactive monitoring, cloud infrastructure management, and technical troubleshooting to keep your business online.</p>
+      {/* Animated Stats Banner */}
+      <section className="border-y border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur" ref={statsRef}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className={`flex flex-wrap justify-center sm:justify-between items-center gap-8 md:gap-12 transition-all duration-1000 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="text-center">
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1">{statsVisible && <AnimatedCounter end={1000} suffix="+" />}</div>
+              <div className="text-sm font-medium text-slate-500 uppercase tracking-wider">Clients Served</div>
             </div>
-            <div className="p-8 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary-100 dark:hover:border-primary-900 transition bg-slate-50 dark:bg-slate-800 group">
-              <ShieldAlert className="text-purple-600 dark:text-purple-400 w-12 h-12 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold mb-3 dark:text-white">CCTV & Security Systems</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">State-of-the-art surveillance networks, access control, and comprehensive digital recording solutions.</p>
+            <div className="text-center">
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1">{statsVisible && <AnimatedCounter end={10} suffix="+" />}</div>
+              <div className="text-sm font-medium text-slate-500 uppercase tracking-wider">Years in UAE</div>
             </div>
-            <div className="p-8 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary-100 dark:hover:border-primary-900 transition bg-slate-50 dark:bg-slate-800 group">
-              <Code className="text-blue-500 dark:text-blue-400 w-12 h-12 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold mb-3 dark:text-white">Web Design & SaaS Apps</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">Custom React/Node web applications, responsive corporate sites, and seamless user experiences.</p>
+            <div className="text-center">
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1">24/7</div>
+              <div className="text-sm font-medium text-slate-500 uppercase tracking-wider">Local Support</div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-slate-900 dark:bg-slate-950 text-white transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 pt-12">
-            <h2 className="text-3xl font-bold tracking-tight">Transparent Pricing Plans</h2>
-            <p className="mt-4 text-slate-400">Choose the perfect tier for your business scale.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Basic */}
-            <div className="bg-slate-800 dark:bg-slate-900 p-8 rounded-2xl border border-slate-700 hover:border-primary-500 transition">
-              <h3 className="text-xl font-semibold mb-2">Basic</h3>
-              <div className="text-4xl font-bold mb-6">$499<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-              <ul className="space-y-4 mb-8 text-slate-300">
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Remote IT Support</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Basic Cloud Backups</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> 4-Camera CCTV Setup</li>
-              </ul>
-              <a href="#contact" className="block w-full text-center py-3 rounded-lg border border-slate-600 hover:bg-slate-700 transition">Get Started</a>
-            </div>
-            {/* Premium */}
-            <div className="bg-gradient-to-b from-primary-900 to-slate-800 dark:from-primary-950 dark:to-slate-900 p-8 rounded-2xl border flex flex-col relative border-primary-500 ring-2 ring-primary-500 ring-opacity-50">
-              <div className="absolute top-0 right-0 bg-primary-500 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg uppercase tracking-wide">Popular</div>
-              <h3 className="text-xl font-semibold mb-2">Standard</h3>
-              <div className="text-4xl font-bold mb-6">$999<span className="text-lg text-slate-400 font-normal">/mo</span></div>
-              <ul className="space-y-4 mb-8 text-slate-100 flex-grow">
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> On-site & Remote Support</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Full Infrastructure Management</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> 8-Camera Security Integration</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Custom Website Maintenance</li>
-              </ul>
-              <a href="#contact" className="block w-full text-center py-3 rounded-lg bg-primary-600 hover:bg-primary-500 font-semibold transition">Get Started</a>
-            </div>
-            {/* Enterprise */}
-            <div className="bg-slate-800 dark:bg-slate-900 p-8 rounded-2xl border border-slate-700 hover:border-primary-500 transition">
-              <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
-              <div className="text-4xl font-bold mb-6">Custom</div>
-              <ul className="space-y-4 mb-8 text-slate-300">
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Dedicated IT Manager</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> 24/7 SLA Response</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Complex Network Security</li>
-                <li className="flex gap-3"><CheckCircle2 className="text-primary-400"/> Bespoke SaaS Development</li>
-              </ul>
-              <a href="#contact" className="block w-full text-center py-3 rounded-lg border border-slate-600 hover:bg-slate-700 transition">Contact Sales</a>
+            <div className="text-center">
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1">{statsVisible && <AnimatedCounter end={98} suffix="%" />}</div>
+              <div className="text-sm font-medium text-slate-500 uppercase tracking-wider">Satisfaction</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-24 bg-white dark:bg-slate-900 relative transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">Let's solve your technology challenges.</h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-                Whether you need a full IT overhaul, a custom software build, or a robust surveillance network, our specialists are ready to architect the perfect solution.
-              </p>
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
-                  <div className="bg-primary-50 dark:bg-slate-800 p-3 rounded-full text-primary-600 dark:text-primary-400"><Monitor /></div>
-                  <span className="font-medium text-lg">Tech Park Avenue, Suite 404</span>
-                </div>
-                <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
-                  <div className="bg-primary-50 dark:bg-slate-800 p-3 rounded-full text-primary-600 dark:text-primary-400"><Smartphone /></div>
-                  <span className="font-medium text-lg">+1 (800) 123-4567</span>
-                </div>
+      {/* Trusted By Marquee */}
+      <section className="py-12 bg-slate-50 dark:bg-slate-950 overflow-hidden border-b border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 mb-8">
+          <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-widest">Trusted By & Partnered With</p>
+        </div>
+        <div className="logo-marquee opacity-70 grayscale hover:grayscale-0 transition-all duration-500 cursor-default flex items-center">
+            {/* First set of logos */}
+            {partnerLogos.map((partner, i) => (
+              <div key={i} className="px-10 flex items-center justify-center min-w-[200px]">
+                <img src={partner.url} alt={`${partner.name} logo`} className="h-10 md:h-12 object-contain" title={partner.name} />
               </div>
+            ))}
+            {/* Duplicate for seamless looping */}
+            {partnerLogos.map((partner, i) => (
+              <div key={`dup-${i}`} className="px-10 flex items-center justify-center min-w-[200px]">
+                <img src={partner.url} alt={`${partner.name} logo`} className="h-10 md:h-12 object-contain" title={partner.name} />
+              </div>
+            ))}
+        </div>
+      </section>
+
+      {/* Services Overview */}
+      <section id="services" className="py-24 bg-white dark:bg-slate-900 transition-colors" ref={servicesRef}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={`text-center mb-16 transition-all duration-700 ${servicesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Core IT Solutions</h2>
+            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">Everything you need to secure, manage, and scale your enterprise.</p>
+          </div>
+          
+          <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${servicesVisible ? 'visible' : ''}`}>
+            {displayServices.map((service, idx) => (
+              <Link key={service.id} to={`/services/${service.slug}`} className="bento-card group flex flex-col h-full overflow-hidden p-0 transition-all hover:translate-y-[-4px]">
+                <div className="h-48 w-full overflow-hidden relative shrink-0">
+                  <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-transparent transition-colors z-10"></div>
+                  <img src={service.image} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 right-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur p-3 rounded-full z-20 shadow-lg text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform">
+                    {iconMap[service.id]}
+                  </div>
+                </div>
+                <div className="p-6 flex-grow flex flex-col">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary-600 transition-colors">{service.title}</h3>
+                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6 flex-grow">{service.description}</p>
+                  <span className="text-primary-600 dark:text-primary-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto w-max">
+                    View Details &rarr;
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          
+          <div className="mt-12 text-center">
+            <Link to="/services" className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-500 transition shadow-lg shadow-primary-900/20">
+              View All 18 Services &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose SmartIT */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="grid lg:grid-cols-2 gap-16 items-center">
+             <div className="space-y-8">
+               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+                 We don't just fix problems.<br/>We prevent them.
+               </h2>
+               <p className="text-lg text-slate-600 dark:text-slate-400">
+                 UAE businesses face unique technological and regulatory challenges. Our proactive approach ensures your infrastructure is secure, compliant, and always online.
+               </p>
+               
+               <div className="space-y-6">
+                 {[
+                   { icon: <Activity className="text-green-500" />, title: 'Proactive Monitoring', desc: 'We identify and resolve issues before they cause downtime.' },
+                   { icon: <Award className="text-blue-500" />, title: 'Local Expertise', desc: 'Deep understanding of UAE compliance (SIRA, TDRA) and data laws.' },
+                   { icon: <Users className="text-purple-500" />, title: 'Dedicated IT Manager', desc: 'A single point of contact who understands your business inside out.' }
+                 ].map((item, i) => (
+                   <div key={i} className="flex gap-4">
+                     <div className="mt-1 bg-white dark:bg-slate-900 p-2 rounded-lg shadow-sm border border-slate-100 dark:border-slate-800 h-max">
+                       {item.icon}
+                     </div>
+                     <div>
+                       <h4 className="font-bold text-slate-900 dark:text-white mb-1">{item.title}</h4>
+                       <p className="text-slate-600 dark:text-slate-400 text-sm">{item.desc}</p>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             </div>
+             
+             {/* Abstract visual/placeholder since we have no images */}
+             <div className="relative h-96 rounded-3xl bg-gradient-to-br from-primary-600 to-purple-800 p-8 flex items-center justify-center overflow-hidden shadow-2xl">
+               <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')]"></div>
+               <div className="glass-panel p-8 text-center max-w-sm relative z-10 animate-float">
+                 <ShieldAlert className="w-16 h-16 text-white mx-auto mb-4" />
+                 <h3 className="text-2xl font-bold text-white mb-2">Secure. Compliant. Fast.</h3>
+                 <p className="text-white/80">Your technology partner in the UAE.</p>
+               </div>
+             </div>
+           </div>
+        </div>
+      </section>
+
+      {/* Pricing Section (AED) */}
+      <section id="pricing" className="py-24 bg-white dark:bg-slate-900 transition-colors" ref={pricingRef}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={`text-center mb-16 transition-all duration-700 ${pricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">IT AMC Pricing Plans</h2>
+            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">Transparent, tiered contracts for Dubai businesses of all sizes.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+            {/* Starter */}
+            <div className="bento-card border-none bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800">
+              <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Starter</h3>
+              <p className="text-slate-500 mb-6 text-sm">Perfect for small offices</p>
+              <div className="text-4xl font-black mb-6 text-slate-900 dark:text-white">AED 1,499<span className="text-base text-slate-500 font-medium">/mo</span></div>
+              <ul className="space-y-4 mb-8 text-slate-700 dark:text-slate-300">
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Remote IT Support</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Basic Endpoint Security</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Weekly Cloud Backups</li>
+                <li className="flex gap-3 items-center text-slate-400 dark:text-slate-500"><CheckCircle2 className="flex-shrink-0" size={18}/> <del>On-site Troubleshooting</del></li>
+              </ul>
+              <Link to="/contact" className="block w-full text-center py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 font-bold hover:border-primary-500 dark:hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition">Get Started</Link>
             </div>
-
-            {/* Form inside a clean card */}
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 md:p-10 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl transition-colors">
-              <h3 className="text-2xl font-bold mb-6 text-slate-800 dark:text-white">Request a Consultation</h3>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label>
-                    <input required name="name" onChange={handleChange} value={formData.name} type="text" className="w-full px-4 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" placeholder="John Doe"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone</label>
-                    <input required name="phone" onChange={handleChange} value={formData.phone} type="tel" className="w-full px-4 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" placeholder="+1 (555) 000-0000"/>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email address</label>
-                    <input required name="email" onChange={handleChange} value={formData.email} type="email" className="w-full px-4 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" placeholder="john@company.com"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Service Required</label>
-                    <select name="serviceType" onChange={handleChange} value={formData.serviceType} className="w-full px-4 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition">
-                      <option>IT Support</option>
-                      <option>CCTV Installation</option>
-                      <option>Web Design</option>
-                      <option>Full Scale Solutions</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Project Details</label>
-                  <textarea required name="message" onChange={handleChange} value={formData.message} rows="4" className="w-full px-4 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" placeholder="Tell us about your requirements..."></textarea>
-                </div>
-
-                {status.text && (
-                  <div className={`p-4 rounded-lg flex items-center gap-3 ${status.type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' : status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-blue-50 text-blue-800 border border-blue-200'}`}>
-                    {status.type === 'success' && <CheckCircle2 size={20} />}
-                    <span className="font-medium">{status.text}</span>
-                  </div>
-                )}
-
-                <button disabled={status.type === 'loading'} type="submit" className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition shadow-md flex items-center justify-center gap-2">
-                  <Send size={18} />
-                  Submit Request
-                </button>
-              </form>
+            
+            {/* Business */}
+            <div className="relative p-8 rounded-3xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-slate-800 shadow-2xl transform md:-translate-y-4">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary-500 to-purple-500 rounded-t-3xl"></div>
+              <div className="absolute top-0 right-8 -translate-y-1/2 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Popular</div>
+              <h3 className="text-xl font-bold mb-2 text-white">Business</h3>
+              <p className="text-slate-400 mb-6 text-sm">Full coverage for SMEs</p>
+              <div className="text-4xl font-black mb-6 text-white">AED 3,499<span className="text-base text-slate-400 font-medium">/mo</span></div>
+              <ul className="space-y-4 mb-8 text-slate-200">
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-primary-400 flex-shrink-0" size={18}/> On-site & Remote Support</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-primary-400 flex-shrink-0" size={18}/> Advanced Cybersecurity</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-primary-400 flex-shrink-0" size={18}/> Daily Cloud Backups</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-primary-400 flex-shrink-0" size={18}/> CCTV & Network Maintenance</li>
+              </ul>
+              <Link to="/contact" className="block w-full text-center py-3 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold transition shadow-lg shadow-primary-900/20">Get Started</Link>
+            </div>
+            
+            {/* Enterprise */}
+            <div className="bento-card border-none bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800">
+              <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Enterprise</h3>
+              <p className="text-slate-500 mb-6 text-sm">For complex requirements</p>
+              <div className="text-4xl font-black mb-6 text-slate-900 dark:text-white">Custom</div>
+              <ul className="space-y-4 mb-8 text-slate-700 dark:text-slate-300">
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Dedicated IT Manager</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> 24/7 SLA Response</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Deep Security Audits</li>
+                <li className="flex gap-3 items-center"><CheckCircle2 className="text-green-500 flex-shrink-0" size={18}/> Custom Software Integrations</li>
+              </ul>
+              <Link to="/contact" className="block w-full text-center py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 font-bold hover:border-primary-500 dark:hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition">Contact Sales</Link>
             </div>
           </div>
         </div>
       </section>
-      
-      {/* Footer */}
-      <footer className="bg-slate-950 border-t border-slate-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-           <div>
-             <span className="text-2xl font-bold tracking-tight text-white"><span className="text-primary-500">Smart</span>IT</span>
-             <p className="text-slate-400 mt-2">Premium technology solutions for modern businesses.</p>
-           </div>
-           <div className="text-slate-500 text-sm">
-             &copy; 2026 Smart IT Solutions. All rights reserved.
-           </div>
+
+      {/* Testimonials */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 text-center mb-12">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">What Our Partners Say</h2>
         </div>
-      </footer>
+        <div className="px-4">
+          <TestimonialCarousel />
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="py-16 md:py-20 bg-primary-600 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Stop letting IT issues slow you down.</h2>
+          <p className="text-xl text-primary-100 mb-10 max-w-2xl mx-auto">
+            Partner with a leading technology consultant in Dubai. Let's build a secure, efficient, and scalable technology future for your business.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link to="/contact" className="px-8 py-4 bg-white text-primary-700 font-bold rounded-xl hover:bg-slate-50 transition shadow-lg inline-block">
+              Request a Free Audit
+            </Link>
+            <a href="tel:+971501234567" className="px-8 py-4 border-2 border-primary-400 text-white font-bold rounded-xl hover:bg-primary-700 transition inline-block">
+              Call Now: +971 50 123 4567
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };

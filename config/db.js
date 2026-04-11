@@ -1,19 +1,31 @@
 const mongoose = require('mongoose');
 
+let isConnected = false;
+
 const connectDB = async () => {
-    if (!process.env.MONGO_URI) {
-        console.warn('MONGO_URI not defined - database connection skipped');
+    // Prevent multiple connections in serverless
+    if (isConnected) {
         return;
     }
+
+    if (!process.env.MONGO_URI && !process.env.MONGODB_URI) {
+        console.warn('⚠️  MONGO_URI not defined - database connection skipped');
+        return;
+    }
+
+    const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        const conn = await mongoose.connect(uri, {
+            serverSelectionTimeoutMS: 5000, // Timeout after 5s
+            socketTimeoutMS: 45000,
+        });
+        isConnected = true;
+        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`Error: ${error.message}`);
-        // Don't exit on Vercel - let the function handle the error
-        if (process.env.VERCEL !== '1') {
-            process.exit(1);
-        }
+        console.error(`❌ MongoDB Connection Error: ${error.message}`);
+        isConnected = false;
+        // In serverless, just log the error - don't crash
     }
 };
 

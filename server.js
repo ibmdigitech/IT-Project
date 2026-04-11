@@ -8,20 +8,22 @@ dotenv.config();
 
 const app = express();
 
-// Support both MONGO_URI and MONGODB_URI (Vercel uses MONGODB_URI)
-if (!process.env.MONGO_URI) {
-  process.env.MONGO_URI = process.env.MONGODB_URI || '';
+// Set MONGO_URI from Vercel's MONGODB_URI if available
+if (!process.env.MONGO_URI && process.env.MONGODB_URI) {
+  process.env.MONGO_URI = process.env.MONGODB_URI;
 }
 
-// Connect to Database - safe for serverless
+// Connect to Database
 if (process.env.MONGO_URI) {
   connectDB();
-} else if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  console.log('MongoDB URI found - attempting connection');
+} else if (!process.env.VERCEL) {
+  // Only use local MongoDB in development, never in Vercel
   process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/it_business_app';
   console.log('Using local MongoDB for development');
   connectDB();
 } else {
-  console.warn('⚠️  MongoDB not configured - API will run without database');
+  console.warn('⚠️  Running without database on Vercel - add MONGODB_URI in settings');
 }
 
 // Body parser

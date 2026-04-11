@@ -13,7 +13,8 @@
       "Bash(vercel *)",
       "Bash(taskkill *)",
       "Bash(git reset *)",
-      "Bash(echo *)"
+      "Bash(echo *)",
+      "Bash(dir *)"
     ]
   },
   "$version": 3

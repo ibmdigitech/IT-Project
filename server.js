@@ -6,20 +6,24 @@ const connectDB = require('./config/db');
 // Load env variables
 dotenv.config();
 
-// Connect to Database
+const app = express();
+
+// Connect to Database - make it non-blocking for serverless
 // Use MongoDB Atlas in production, local MongoDB in development
 if (!process.env.MONGO_URI) {
-  if (process.env.NODE_ENV === 'production') {
-    console.error('ERROR: MONGO_URI environment variable is required in production');
-    console.error('Please set it in Vercel Environment Variables');
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    console.warn('WARNING: MONGO_URI environment variable is not set');
+    console.warn('Please add it in Vercel Environment Variables');
+    // Don't crash, let the app run but DB won't work
   } else {
     process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/it_business_app';
     console.log('Using local MongoDB for development');
+    connectDB();
   }
+} else {
+  // Only connect if MONGO_URI is set
+  connectDB();
 }
-connectDB();
-
-const app = express();
 
 // Body parser
 app.use(express.json());

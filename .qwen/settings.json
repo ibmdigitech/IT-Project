@@ -11,7 +11,9 @@
       "Bash(npx *)",
       "Bash(npm install *)",
       "Bash(vercel *)",
-      "Bash(taskkill *)"
+      "Bash(taskkill *)",
+      "Bash(git reset *)",
+      "Bash(echo *)"
     ]
   },
   "$version": 3

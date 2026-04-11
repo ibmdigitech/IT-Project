@@ -1,7 +1,8 @@
 {
-  "orgId": "team_IbmdigiTech",
-  "projectId": "IT-Project",
+  "projectId": "it-project",
+  "orgId": "team_ibmdigitech",
   "settings": {
-    "autoExpose": true
+    "autoExpose": true,
+    "framework": null
   }
 }

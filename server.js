@@ -7,9 +7,15 @@ const connectDB = require('./config/db');
 dotenv.config();
 
 // Connect to Database
-// Use local MongoDB if not specified in environment
+// Use MongoDB Atlas in production, local MongoDB in development
 if (!process.env.MONGO_URI) {
-  process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/it_business_app';
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: MONGO_URI environment variable is required in production');
+    console.error('Please set it in Vercel Environment Variables');
+  } else {
+    process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/it_business_app';
+    console.log('Using local MongoDB for development');
+  }
 }
 connectDB();
 

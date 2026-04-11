@@ -1,23 +1,22 @@
 const mongoose = require('mongoose');
 
+// Use MONGODB_URI from Vercel environment variables
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
+
 let isConnected = false;
 
 const connectDB = async () => {
-    // Prevent multiple connections in serverless
     if (isConnected) {
         return;
     }
 
-    if (!process.env.MONGO_URI && !process.env.MONGODB_URI) {
-        console.warn('⚠️  MONGO_URI not defined - database connection skipped');
-        return;
+    if (!MONGO_URI) {
+        throw new Error('MONGODB_URI environment variable is required. Add it in Vercel → Settings → Environment Variables');
     }
 
-    const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
-
     try {
-        const conn = await mongoose.connect(uri, {
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s
+        const conn = await mongoose.connect(MONGO_URI, {
+            serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
         });
         isConnected = true;
@@ -25,7 +24,7 @@ const connectDB = async () => {
     } catch (error) {
         console.error(`❌ MongoDB Connection Error: ${error.message}`);
         isConnected = false;
-        // In serverless, just log the error - don't crash
+        throw error;
     }
 };
 

@@ -40,13 +40,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Route files
-const authRoutes = require('./routes/authRoutes');
-const contactRoutes = require('./routes/contactRoutes');
+// Safely load routes - prevent crash if dependencies fail
+try {
+  const authRoutes = require('./routes/authRoutes');
+  const contactRoutes = require('./routes/contactRoutes');
 
-// Mount routes
-app.use('/api/auth', authRoutes);
-app.use('/api/contacts', contactRoutes);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/contacts', contactRoutes);
+} catch (error) {
+  console.warn('Warning: Could not load some routes:', error.message);
+}
 
 // Fallback error handling (basic)
 app.use((req, res, next) => {

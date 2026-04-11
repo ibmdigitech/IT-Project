@@ -5,10 +5,12 @@ const Contact = require('../models/Contact');
 // @access  Private/Admin
 const getContacts = async (req, res) => {
   try {
+    const Contact = require('../models/Contact');
     const contacts = await Contact.find().sort({ date: -1 });
     res.json(contacts);
   } catch (error) {
-    res.status(500).json({ message: 'Server error retrieving contacts' });
+    console.error('Get contacts error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 
@@ -17,6 +19,7 @@ const getContacts = async (req, res) => {
 // @access  Private/Admin
 const getStats = async (req, res) => {
   try {
+    const Contact = require('../models/Contact');
     const totalRequests = await Contact.countDocuments();
     const pending = await Contact.countDocuments({ status: 'Pending' });
     const inProgress = await Contact.countDocuments({ status: 'In Progress' });
@@ -24,7 +27,8 @@ const getStats = async (req, res) => {
 
     res.json({ totalRequests, pending, inProgress, completed });
   } catch (error) {
-    res.status(500).json({ message: 'Server error retrieving stats' });
+    console.error('Stats error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 
@@ -33,12 +37,14 @@ const getStats = async (req, res) => {
 // @access  Public
 const createContact = async (req, res) => {
   try {
+    const Contact = require('../models/Contact');
     const { name, email, phone, serviceType, message } = req.body;
     const contact = new Contact({ name, email, phone, serviceType, message });
     const createdContact = await contact.save();
     res.status(201).json(createdContact);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to submit request' });
+    console.error('Create contact error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 
@@ -47,6 +53,7 @@ const createContact = async (req, res) => {
 // @access  Private/Admin
 const updateContactStatus = async (req, res) => {
   try {
+    const Contact = require('../models/Contact');
     const { status } = req.body;
     const contact = await Contact.findById(req.params.id);
 
@@ -61,7 +68,8 @@ const updateContactStatus = async (req, res) => {
       res.status(404).json({ message: 'Request not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error updating status' });
+    console.error('Update status error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 
@@ -70,6 +78,7 @@ const updateContactStatus = async (req, res) => {
 // @access  Private/Admin
 const deleteContact = async (req, res) => {
   try {
+    const Contact = require('../models/Contact');
     const contact = await Contact.findById(req.params.id);
 
     if (contact) {
@@ -79,7 +88,8 @@ const deleteContact = async (req, res) => {
       res.status(404).json({ message: 'Request not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error deleting request' });
+    console.error('Delete contact error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 

@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
 const generateToken = (id) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET not configured');
+  }
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
@@ -12,6 +14,7 @@ const authUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    const User = require('../models/User');
     const user = await User.findOne({ username });
     if (user && (await user.matchPassword(password))) {
       res.json({
@@ -24,7 +27,8 @@ const authUser = async (req, res) => {
       res.status(401).json({ message: 'Invalid username or password' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Auth error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 
@@ -33,6 +37,7 @@ const authUser = async (req, res) => {
 // @access  Public (Only allowed if no users exist)
 const setupAdmin = async (req, res) => {
   try {
+    const User = require('../models/User');
     const userCount = await User.countDocuments({});
     if (userCount > 0) {
       return res.status(400).json({ message: 'Admin already exists' });
@@ -40,14 +45,15 @@ const setupAdmin = async (req, res) => {
 
     const { username, password } = req.body;
     const user = await User.create({ username, password, role: 'admin' });
-    
+
     res.status(201).json({
       _id: user._id,
       username: user.username,
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Setup error:', error);
+    res.status(500).json({ message: 'Database connection required. Please configure MongoDB Atlas.' });
   }
 };
 

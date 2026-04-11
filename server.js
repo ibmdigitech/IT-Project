@@ -7,6 +7,10 @@ const connectDB = require('./config/db');
 dotenv.config();
 
 // Connect to Database
+// Use local MongoDB if not specified in environment
+if (!process.env.MONGO_URI) {
+  process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/it_business_app';
+}
 connectDB();
 
 const app = express();
@@ -16,6 +20,15 @@ app.use(express.json());
 
 // Enable CORS
 app.use(cors());
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'SmartIT API is running',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Route files
 const authRoutes = require('./routes/authRoutes');
@@ -30,8 +43,14 @@ app.use((req, res, next) => {
   res.status(404).json({ message: 'API Route Not Found' });
 });
 
+// Only start listening if NOT on Vercel (Vercel handles this automatically)
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;

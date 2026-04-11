@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(node *)",
+      "Bash(timeout *)",
+      "Bash(netstat *)",
+      "Bash(curl *)"
     ]
-  }
+  },
+  "$version": 3
 }

@@ -14,7 +14,8 @@
       "Bash(taskkill *)",
       "Bash(git reset *)",
       "Bash(echo *)",
-      "Bash(dir *)"
+      "Bash(dir *)",
+      "Bash(git rm *)"
     ]
   },
   "$version": 3

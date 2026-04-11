@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Home from './pages/Public/Home';
 import About from './pages/Public/About';
@@ -22,6 +24,8 @@ function App() {
     <Router>
       <AuthProvider>
         <ScrollToTop />
+        <Analytics />
+        <SpeedInsights />
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-grow">
@@ -38,17 +42,17 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/legal" element={<Legal />} />
-              
+
               <Route path="/admin/login" element={<Login />} />
-              
+
               {/* Protected Admin Routes */}
-              <Route 
-                path="/admin/dashboard" 
+              <Route
+                path="/admin/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                } 
+                }
               />
             </Routes>
           </main>

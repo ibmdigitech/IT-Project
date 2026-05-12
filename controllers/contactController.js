@@ -37,8 +37,16 @@ const getStats = async (req, res) => {
 // @access  Public
 const createContact = async (req, res) => {
   try {
-    const Contact = require('../models/Contact');
     const { name, email, phone, serviceType, message } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        message: 'Please fill all required fields'
+      });
+    }
+
+    const Contact = require('../models/Contact');
     const contact = new Contact({ name, email, phone, serviceType, message });
     const createdContact = await contact.save();
     res.status(201).json(createdContact);

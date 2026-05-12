@@ -1,17 +1,38 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+
 dotenv.config();
 
 const app = express();
 
-// Body parser
+// Middleware
 app.use(express.json());
-
-// Enable CORS
 app.use(cors());
+app.use(helmet());
+app.use(morgan('dev'));
 
-// Health check endpoint (always works)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100
+});
+app.use(limiter);
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('MongoDB Connected');
+  })
+  .catch((error) => {
+    console.error('MongoDB Connection Error:', error.message);
+  });
+
+// Health API
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -20,20 +41,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Safely load routes
-try {
-  const authRoutes = require('./routes/authRoutes');
-  const contactRoutes = require('./routes/contactRoutes');
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 
-  app.use('/api/auth', authRoutes);
-  app.use('/api/contacts', contactRoutes);
-} catch (error) {
-  console.warn('Routes loaded with warnings:', error.message);
-}
+app.use('/api/auth', authRoutes);
+app.use('/api/contacts', contactRoutes);
 
-// Fallback
-app.use((req, res) => {
-  res.status(404).json({ message: 'API Route Not Found' });
+// Root Route
+app.get('/', (req, res) => {
+  res.send('SmartIT Backend Running');
 });
 
-module.exports = app;
+// 404 handler
+app.use(notFound);
+
+// Error handler
+app.use(errorHandler);
+
+// Server
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

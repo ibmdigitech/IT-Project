@@ -24,13 +24,17 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB Connected');
-  })
-  .catch((error) => {
-    console.error('MongoDB Connection Error:', error.message);
-  });
+if (process.env.MONGO_URI) {
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log('MongoDB Connected');
+    })
+    .catch((error) => {
+      console.error('MongoDB Connection Error:', error.message);
+    });
+} else {
+  console.warn('MONGO_URI is not defined in environment variables. Skipping database connection.');
+}
 
 // Health API
 app.get('/api/health', (req, res) => {
@@ -62,6 +66,11 @@ app.use(errorHandler);
 // Server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export for Vercel Serverless Functions
+module.exports = app;

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 import axios from 'axios';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     const userInfo = localStorage.getItem('userInfo');
     return userInfo ? JSON.parse(userInfo) : null;
   });
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
 
   const API_URL = import.meta.env.VITE_API_URL || '';

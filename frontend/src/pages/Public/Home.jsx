@@ -128,7 +128,7 @@ const Home = () => {
           </div>
           
           <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${servicesVisible ? 'visible' : ''}`}>
-            {displayServices.map((service, idx) => (
+            {displayServices.map((service) => (
               <Link key={service.id} to={`/services/${service.slug}`} className="bento-card group flex flex-col h-full overflow-hidden p-0 transition-all hover:translate-y-[-4px]">
                 <div className="h-48 w-full overflow-hidden relative shrink-0">
                   <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-transparent transition-colors z-10"></div>

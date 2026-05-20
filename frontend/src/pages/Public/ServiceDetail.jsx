@@ -115,6 +115,7 @@ const ServiceDetail = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-200 dark:border-slate-800">
          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-12 text-center">Related Solutions</h2>
          <div className="grid md:grid-cols-3 gap-8">
+           {/* eslint-disable-next-line react-hooks/purity */}
            {servicesData.filter(s => s.slug !== slug).sort(() => 0.5 - Math.random()).slice(0, 3).map((s) => (
              <Link key={s.slug} to={`/services/${s.slug}`} className="bento-card group h-72 p-0 overflow-hidden relative">
                 <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />

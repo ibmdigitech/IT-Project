@@ -10,7 +10,6 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = '', prefix = '' }) => 
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
-          let start = 0;
           const startTime = performance.now();
 
           const animate = (currentTime) => {

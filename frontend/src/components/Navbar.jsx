@@ -32,6 +32,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpen(false);
     setServicesOpen(false);
   }, [location]);
@@ -110,7 +111,7 @@ const Navbar = () => {
                       { label: 'Cloud Solutions', icon: '☁️', slug: 'cloud-solution' },
                       { label: 'Web Development', icon: '🌐', slug: 'web-design-development' },
                       { label: 'Network & Cabling', icon: '🔌', slug: 'structured-cabling' },
-                    ].map((item, index) => (
+                    ].map((item) => (
                       <Link
                         key={item.label}
                         to={`/services/${item.slug}`}
